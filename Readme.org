@@ -1,0 +1,17 @@
+Just make sub clips from a video at a Clojure repl.
+
+I was manually putting those timestamps into ffmpeg commands.
+Then I looked for simple cutting software but even the simple stuff didn't seem simple to me.
+
+* Mpv
+
+#+begin_src shell
+  mpv --input-ipc-server=/tmp/mpvsocket foo.mp4
+#+end_src
+
+you start mpv like so and
+
+=mpv/curr-timestamp!= has the meaning of the current hh:mm:ss timestamp.
+I assume you know how to eval and insert with your editor, build a snip dsl, say =doit= and be happy.
+
+May the force be with you my friend.

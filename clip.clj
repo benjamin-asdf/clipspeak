@@ -12,12 +12,25 @@
 
 (defn sub-snip [snip from to] (assoc snip :from from :to to))
 
-(defn concat-snips [& snips] (vec snips))
+(defn concat-snips [& snips]
+  {:concated-snips (vec snips)})
 
 (defn speed-snip [snip speed-by]
   (assoc snip :speed speed-by))
 
-(defn speed! [{:keys [file from to]} out-file])
+;; ** 1.3x
+;; ffmpeg -i vid1-speed-part-2.mp4 -filter:v "setpts=PTS/1.3" -filter:a "atempo=1.3" vid1-speed-speeded.mp4
+
+(defn speed! [{:keys [file speed]} out-file]
+  (assert (and speed (<= 0.5 speed 2.0)))
+  (let [speed-cmd (format
+                   "ffmpeg -y -i %s -filter:v \"setpts=PTS/%s\" -filter:a \"atempo=%s\" %s"
+                   file
+                   speed
+                   speed
+                   out-file)]
+    (process/shell speed-cmd)
+    (->snip out-file nil nil)))
 
 (defn
   cut!
@@ -54,35 +67,41 @@
 
 (defn doit-1!
   ([snip] (doit-1! snip (str (random-uuid) ".mp4")))
-  ([snip out-file]
-   (def snip snip)
+  ([{:keys [concated-snips] :as snip} out-file]
    (cond
-     (vector? snip)
-     (concat! (doall (map doit-1! snip)) out-file)
+     (seq concated-snips)
+     (let [concated (concat! (doall (map doit-1! concated-snips)) out-file)]
+       (doit-1! (merge concated (dissoc snip :concated-snips))))
      (or (:from snip) (:to snip))
      (cut! snip out-file)
-     (:speed snip) (speed! snip))))
+     (:speed snip) (speed! snip out-file)
+     :else snip)))
 
 (defn doit! [snip out-file]
-  (doit-1! snip out-file))
-
-
-
-(comment
-  (doit-1! (-> (->snip "/home/benj/Pictures/bobscheme/vid2.mp4" "00:00:10" "00:00:20")) "foo2.mp4")
-
-  )
-
+  (let [file (fs/absolutize (fs/file out-file))]
+    (fs/with-temp-dir [dir {}]
+      (fs/copy (:file (doit-1! snip)) file {:replace-existing true}))))
 
 (comment
+  (doit-1! (-> (->snip "/home/benj/Pictures/bobscheme/vid2.mp4" "00:00:10" "00:00:20")) "foo2.mp4"))
 
+(comment
   (let [snip (->snip "/home/benj/Pictures/bobscheme/vid2.mp4" nil nil)
-        snips
-        (concat-snips
-         (sub-snip snip nil "00:00:10")
-         (sub-snip snip nil "00:00:20"))]
-    (doit! snips (fs/absolutize (fs/file "foo2.mp4"))))
+        snip
+        (->
+         (concat-snips
+          (sub-snip snip nil "00:00:10")
+          (sub-snip snip nil "00:00:20"))
+         (speed-snip 1.3))
+        out-file "foo.mp4"]
+    (doit! snip out-file))
 
-  (mpv/curr-timestamp!)
+  {:concated-snips [{:file "/home/benj/Pictures/bobscheme/vid2.mp4"
+                     :from nil
+                     :to "00:00:10"}
+                    {:file "/home/benj/Pictures/bobscheme/vid2.mp4"
+                     :from nil
+                     :to "00:00:20"}]
+   :speed 1.3}
 
-  )
+  (mpv/curr-timestamp!))

@@ -1,7 +1,7 @@
 Just make sub clips from a video at a Clojure repl.
 
 I was manually putting those timestamps into ffmpeg commands.
-Then I looked for simple cutting software but even the simple stuff didn't seem simple to me.
+Then I looked for simple cutting software. But 'simple cuttting software' is not simple.
 
 * Mpv
 

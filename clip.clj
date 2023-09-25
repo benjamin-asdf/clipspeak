@@ -86,22 +86,67 @@
   (doit-1! (-> (->snip "/home/benj/Pictures/bobscheme/vid2.mp4" "00:00:10" "00:00:20")) "foo2.mp4"))
 
 (comment
-  (let [snip (->snip "/home/benj/Pictures/bobscheme/vid2.mp4" nil nil)
+  (let [
         snip
         (->
          (concat-snips
-          (sub-snip snip nil "00:00:10")
-          (sub-snip snip nil "00:00:20"))
-         (speed-snip 1.3))
+          (->snip "/home/benj/Pictures/screen-230826-1935-09.mp4" nil "00:00:11")
+          (->snip "/home/benj/Pictures/screen-230826-1936-38.mp4" nil "00:08:58")
+          (->snip "/home/benj/Pictures/screen-230826-2018-21.mp4" nil "00:03:11")
+          (->snip "/home/benj/Pictures/screen-230826-2018-21.mp4" "00:04:45" "00:08:08")
+          (->snip "/home/benj/Pictures/screen-230826-2018-21.mp4" "00:20:43" nil))
+         (speed-snip 1.8))
         out-file "foo.mp4"]
     (doit! snip out-file))
 
-  {:concated-snips [{:file "/home/benj/Pictures/bobscheme/vid2.mp4"
-                     :from nil
-                     :to "00:00:10"}
-                    {:file "/home/benj/Pictures/bobscheme/vid2.mp4"
-                     :from nil
-                     :to "00:00:20"}]
-   :speed 1.3}
+  (let [
+        snip
+        (->
+         (concat-snips
+          (->snip "/storage-disk/phone-audio/202303/20220905_210542.m4a"  nil "00:02:00"))
+         (speed-snip 1.8))
+        out-file "foo.mp4"]
+    (doit! snip out-file))
+
+  (let [snip
+        (->
+         (concat-snips
+          (->snip "/home/benj/Pictures/screen-230909-1741-15.mp4" nil "00:02:00")
+          (->snip "/home/benj/Pictures/screen-230909-1741-15.mp4" "00:04:25" "00:12:00")
+          (->snip "/home/benj/Pictures/screen-230909-1741-15.mp4" "00:12:47" "00:13:34")
+          (->snip "/home/benj/Pictures/screen-230909-1741-15.mp4" "00:23:38" "00:25:27")
+          (->snip "/home/benj/Pictures/screen-230909-1741-15.mp4" "00:33:40" "00:37:00")
+
+          (->snip "/home/benj/Pictures/screen-230909-1938-07.mp4" nil "00:03:21")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" nil "00:03:55")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "00:04:22" "00:11:47")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "00:12:52" "00:14:57")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "00:30:07" "00:48:46")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "00:50:00" "00:53:30")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "01:00:55" "01:06:38")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "01:08:27" "01:42:30")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "01:44:30" "01:51:46")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "01:54:26" "02:14:30")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "02:16:12" "02:22:43")
+          (->snip "/home/benj/Pictures/screen-230909-1945-50.mp4" "02:25:10" nil)
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" nil "00:03:39")
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" "00:16:10" "00:16:30")
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" "00:19:45" "00:21:30")
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" "00:28:13" "00:40:00")
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" "00:51:52" "00:59:08")
+          (->snip "/home/benj/Pictures/screen-230909-2216-19.mp4" "01:03:18" nil))
+         ;; (speed-snip 1.8)
+         )
+        out-file "brownians.mp4"]
+    (doit! snip out-file))
+
+
+#object[sun.nio.fs.UnixPath 0x463554d2 "/home/benj/repos/clipspeak/brownians.mp4"]
+
+
+
+
+
+
 
   (mpv/curr-timestamp!))
